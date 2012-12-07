@@ -6,7 +6,7 @@ use warnings;
 
 use DBI;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our $DBH;
 our $SINGLETON;
@@ -130,16 +130,15 @@ DBIx::ActiveRecord - rails3 ActiveRecord like O/R Mapper
 
 define Model
 
-    use DBIx::ActiveRecord::Model;
     package MyApp::Model::User;
     use base 'DBIx::ActiveRecord::Model';
     __PACKAGE__->table('users'); # table name is required
-    __PACKAGE__->column(qw/id name created_at updated_at/); # required
+    __PACKAGE__->columns(qw/id name created_at updated_at/); # required
     __PACKAGE__->primary_keys(qw/id/); # required
 
     # scope
-    __PACKAGE__->default_scope(sub{ shift->eq(deleted => 0) });
-    __PACKAGE__->scope(adult => sub{ shift->le(age => 20) });
+    __PACKAGE__->default_scope(sub{ shift->ne(deleted => 1) });
+    __PACKAGE__->scope(adult => sub{ shift->ge(age => 20) });
     __PACKAGE__->scope(latest => sub{ shift->desc('created_at') });
 
     # association
@@ -721,7 +720,9 @@ do delete.
 
 =head1 BUGS AND LIMITATIONS
 
-No bugs have been reported.
+This module is alpha version.
+Please give me feedback.
+Please PullRequest with github If you have more better idea.
 
 =head1 AUTHOR
 

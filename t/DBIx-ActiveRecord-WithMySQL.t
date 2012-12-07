@@ -68,7 +68,7 @@ __PACKAGE__->primary_keys(qw/id/);
 package main;
 
 
-DBIx::ActiveRecord->connect("dbi:mysql:ar_test", 'root', '', {});
+DBIx::ActiveRecord->connect("dbi:mysql:ar_test", 'root', 'root', {});
 {
     # set up
     User->unscoped->delete_all;
@@ -247,7 +247,7 @@ DBIx::ActiveRecord->connect("dbi:mysql:ar_test", 'root', '', {});
     $s->all;
 
     $s = User->limit(5)->offset(2);
-    is $s->to_sql, "SELECT * FROM users WHERE deleted != ? LIMIT 5 OFFSET 2";
+    is $s->to_sql, "SELECT * FROM users WHERE deleted != ? LIMIT ? OFFSET ?";
     $s->all;
 
     $s = User->eq(id => 1)->lock;
@@ -369,6 +369,14 @@ DBIx::ActiveRecord->connect("dbi:mysql:ar_test", 'root', '', {});
 
     my $users = User->includes('posts', 'comments');
     ok @{$users};
+}
+
+{
+    # count
+    Post->count;
+    Post->eq(title => 5)->count;
+    Post->joins('user')->merge(User->eq(id => 3))->count;
+
 }
 
 done_testing;
